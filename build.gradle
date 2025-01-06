@@ -9,12 +9,97 @@ plugins {
 group = 'com.example'
 version = '1.0'
 
-
-
+repositories {
+  mavenCentral()
+}
 
 dependencies {
+  //testImplementation platform('org.junit:junit-bom:5.10.0')
+  //testImplementation 'org.junit.jupiter:junit-jupiter'
+
   testImplementation 'io.cucumber:cucumber-java:6.0.0'
-    testImplementation 'io.cucumber:cucumber-junit:6.0.0'
-    testImplementation 'junit:junit:4.12'
+  testImplementation 'io.cucumber:cucumber-junit:6.0.0'
+  testImplementation 'junit:junit:4.12'
+  implementation 'com.sendgrid:sendgrid-java:4.9.3'
+}
+
+
+
+task cucumberReports {
+  doLast {
+    def outputDir = file('build/reports/cucumber')
+    def buildId = '0'
+    def reports = files('reports/cucumber-report.json')
+
+    // Ensure the output directory exists
+    outputDir.mkdirs()
+
+    // Copy the cucumber report to the output directory
+    copy {
+      from reports
+      into outputDir
+    }
+
+    println "Cucumber reports generated in ${outputDir}"
+  }
+}
+
+/* test {
+    useJUnitPlatform()
+}
+*/
+
+test {
+  systemProperty 'cucumber.plugin', 'json:reports/cucumber-report.json'
+}
+
+
+tasks.test {
+  finalizedBy tasks.jacocoTestReport
+}
+tasks.named("sonarqube") {
+  dependsOn "test"
+}
+
+jacocoTestReport {
+  dependsOn test
+  reports {
+    xml.required.set(true) // Rapport XML, utile  SonarQube
+    csv.required.set(false)
+    html.outputLocation.set(file("$buildDir/reports/jacoco/html"))
+  }
+}
+
+javadoc {
+  source = sourceSets.main.allJava
+  classpath = configurations.runtimeClasspath
+  destinationDir = file("$buildDir/docs/javadoc")
+}
+
+tasks.build {
+  dependsOn tasks.javadoc
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java // Publication du composant Java (JAR, etc.)
+
+    }
+  }
+  repositories {
+
+
+    // Pour un dépôt distant (comme Nexus ou Artifactory)
+    // Décommentez et configurez si nécessaire
+    maven {
+      url = uri("https://mymavenrepo.com/repo/axM2YbsAeECT3jRsNisR/")
+      credentials {
+        username = "myMavenRepo"
+        password = "rayane2003"
+      }
+    }
+  }
+
 
 }
