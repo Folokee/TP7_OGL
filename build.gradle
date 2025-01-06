@@ -1,19 +1,20 @@
+
 plugins {
-    id 'java'
+  id 'java'
+  id 'jacoco-report-aggregation'
+  id "org.sonarqube" version "4.4.0.3356"
+  id 'maven-publish'
 }
 
 group = 'com.example'
-version = '1.0-SNAPSHOT'
+version = '1.0'
 
-repositories {
-    mavenCentral()
-}
+
+
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-}
+  testImplementation 'io.cucumber:cucumber-java:6.0.0'
+    testImplementation 'io.cucumber:cucumber-junit:6.0.0'
+    testImplementation 'junit:junit:4.12'
 
-test {
-    useJUnitPlatform()
 }
