@@ -79,7 +79,7 @@ javadoc {
 tasks.build {
   dependsOn tasks.javadoc
 }
-/*
+
 publishing {
   publications {
     mavenJava(MavenPublication) {
@@ -87,6 +87,7 @@ publishing {
 
     }
   }
+  /*
   repositories {
 
 
@@ -99,7 +100,7 @@ publishing {
         password = "rayane2003"
       }
     }
-  }
+  }*/
 
 
-}*/
+}
