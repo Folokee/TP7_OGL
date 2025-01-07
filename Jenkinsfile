@@ -35,7 +35,7 @@ pipeline {
             steps {
                 script {
                     // Run SonarQube analysis
-                    withSonarQubeEnv('SonarQube') {
+                    withSonarQubeEnv('sonarqube') {
                         sh 'sonar-scanner'
                     }
                 }
