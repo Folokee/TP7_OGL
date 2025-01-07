@@ -4,14 +4,27 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                bat './gradlew test'
-                junit 'build/test-results/**/*.xml'
-                cucumber 'build/reports/cucumber/*.json'
+                script {
+                    // Run tests
+                    bat './gradlew test'
+                    
+                    // Create cucumber report directory
+                    bat 'mkdir -p build/reports/cucumber'
+                    
+                    // Copy cucumber reports
+                    bat 'cp reports/cucumber-report.json build/reports/cucumber/'
+                    
+                    // Generate test reports
+                    junit 'build/test-results/**/*.xml'
+                    cucumber buildStatus: 'UNSTABLE',
+                            fileIncludePattern: '**/cucumber-report.json',
+                            jsonReportDirectory: 'build/reports/cucumber'
+                }
             }
         }
         stage('Code Analysis') {
             steps {
-                sh './gradlew sonarqube'
+                bat './gradlew sonarqube'
             }
         }
         stage('Code Quality') {
