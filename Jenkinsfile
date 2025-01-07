@@ -100,7 +100,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo ${MAVEN_USERNAME}
+                echo "${MAVEN_USERNAME}"
             }
             post {
                 success {
