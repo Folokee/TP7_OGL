@@ -5,13 +5,13 @@ pipeline {
         stage('Test') {
             steps {
                 // Run unit tests
-                sh './gradlew test'
+                bat './gradlew test'
                 
                 // Generate Jacoco test coverage reports
-                sh './gradlew jacocoTestReport'
+                bat './gradlew jacocoTestReport'
                 
                 // Generate Cucumber reports
-                sh './gradlew cucumberReports'
+                bat './gradlew cucumberReports'
             }
             post {
                 always {
