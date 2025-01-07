@@ -30,16 +30,20 @@ pipeline {
                 }
             }
         }
-    }
 
-    stage('Code Analysis') {
-        steps {
-            script {
-                // Run SonarQube analysis
-                withSonarQubeEnv('SonarQube') {
-                    sh 'sonar-scanner'
+        stage('Code Analysis') {
+            steps {
+                script {
+                    // Run SonarQube analysis
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'sonar-scanner'
+                    }
                 }
             }
         }
+
+
     }
+
+    
 }
