@@ -50,11 +50,25 @@ pipeline {
             steps {
                 script {
                     // Wait for quality gate response from SonarQube
-                    timeout(time: 1, unit: 'MINUTES') {
-                        def qg = waitForQualityGate()
+                    timeout(time: 2, unit: 'MINUTES') {
+                        while (true) {
+                            def qg = waitForQualityGate()
+                            if (qg != null) {
+                                if (qg.status != 'IN_PROGRESS') {
+                                    if (qg.status != 'OK') {
+                                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                                    }
+                                    break
+                                }
+                            } else {
+                                echo 'Quality gate not yet computed'
+                            }
+                            sleep 10
+                        }
+                        /*def qg = waitForQualityGate()
                         if (qg.status != 'OK') {
                             error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                        }
+                        }*/
                     }
                 }
             }
