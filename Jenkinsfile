@@ -68,14 +68,37 @@ pipeline {
                             }
                             sleep 10
                         }
-                        /*def qg = waitForQualityGate()
-                        if (qg.status != 'OK') {
-                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                        }*/
                     }
                 }
             }
         }
+
+
+        stage('Build') {
+            steps {
+                script {
+                    // Generate JAR and Documentation
+                    bat './gradlew.bat build javadoc'
+                    
+                    // Archive JAR files
+                    archiveArtifacts artifacts: '**/build/libs/*.jar', fingerprint: true
+                    
+                    // Archive Javadoc
+                    archiveArtifacts artifacts: '**/build/docs/javadoc/**', fingerprint: true
+                }
+            }
+            post {
+                success {
+                    echo 'Successfully built and archived artifacts'
+                }
+                failure {
+                    error 'Failed to build project'
+                }
+            }
+        }
+
+
+        
 
 
     }
