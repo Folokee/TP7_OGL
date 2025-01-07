@@ -141,12 +141,15 @@ pipeline {
                     )
                     
                     // Slack Notification
-                    slackSend(
-                        channel: "${SLACK_CHANNEL}",
-                        tokenCredentialId: "${SLACK_TOKEN}",
-                        color: currentBuild.result == 'SUCCESS' ? 'good' : 'danger',
-                        message: "Pipeline ${currentBuild.result}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
-                    )
+                    withCredentials([string(credentialsId: 'slack_webhook', variable: 'SLACK_TOKEN')]) {
+                        slackSend(
+                            channel: "${SLACK_CHANNEL}",
+                            tokenCredentialId: "${SLACK_TOKEN}",
+                            color: currentBuild.result == 'SUCCESS' ? 'good' : 'danger',
+                            message: "Pipeline ${currentBuild.result}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
+                        )
+                    }
+                    
                 }
             }
         }
