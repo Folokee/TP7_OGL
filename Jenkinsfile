@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        SLACK_CHANNEL = '#tp'
+        SLACK_TOKEN = credentials('slack_webhook') // Create this credential ID in Jenkins
+    }
+
     stages {
         stage('Test') {
             steps {
@@ -136,8 +141,9 @@ pipeline {
                     )
                     
                     // Slack Notification
-                    slackSend (
-                        channel: '#tp',
+                    slackSend(
+                        channel: "${SLACK_CHANNEL}",
+                        tokenCredentialId: "${SLACK_TOKEN}",
                         color: currentBuild.result == 'SUCCESS' ? 'good' : 'danger',
                         message: "Pipeline ${currentBuild.result}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
                     )
@@ -161,7 +167,8 @@ pipeline {
                 )
                 
                 slackSend (
-                    channel: '#jenkins-notifications',
+                    channel: "${SLACK_CHANNEL}",
+                    tokenCredentialId: "${SLACK_TOKEN}",
                     color: 'danger',
                     message: "Pipeline Failed: Job ${env.JOB_NAME} failed at stage ${FAILED_STAGE}\n More info at: ${env.BUILD_URL}"
                 )
