@@ -36,7 +36,7 @@ pipeline {
                 script {
                     // Run SonarQube analysis
                     withSonarQubeEnv('sonarqube') {
-                        sh 'sonar-scanner'
+                        bat 'sonar-scanner'
                     }
                 }
             }
