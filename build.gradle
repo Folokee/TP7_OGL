@@ -79,7 +79,7 @@ javadoc {
 tasks.build {
   dependsOn tasks.javadoc
 }
-
+/*
 publishing {
   publications {
     mavenJava(MavenPublication) {
@@ -102,4 +102,4 @@ publishing {
   }
 
 
-}
+}*/

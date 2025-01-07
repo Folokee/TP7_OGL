@@ -97,8 +97,47 @@ pipeline {
             }
         }
 
+        stage('Deploy') {
+            steps {
+                script {
+                    // Deploy to Maven repository
+                    bat './gradlew.bat publish'
+                }
+            }
+            post {
+                success {
+                    echo 'Successfully deployed artifacts to Maven repository'
+                }
+                failure {
+                    error 'Failed to deploy artifacts'
+                }
+            }
+        }
 
-        
+
+        stage('Deploy') {
+            steps {
+                script {
+                    bat """
+                        ./gradlew.bat publish \
+                        -PmavenRepoUrl=${MAVEN-URL} \
+                        -PmavenUsername=${MAVEN-USERNAME} \
+                        -PmavenPassword=${MAVEN-PASSWORD}
+                    """
+                }
+            }
+            post {
+                success {
+                    echo 'Successfully deployed artifacts to Maven repository'
+                }
+                failure {
+                    error 'Failed to deploy artifacts'
+                }
+            }
+        }
+
+
+
 
 
     }
