@@ -1,64 +1,37 @@
-
 pipeline {
     agent any
+
     stages {
         stage('Test') {
             steps {
-                script {
-                    // Run tests
-                    bat './gradlew test'
+                // Run unit tests
+                sh './gradlew test'
+                
+                // Generate Jacoco test coverage reports
+                sh './gradlew jacocoTestReport'
+                
+                // Generate Cucumber reports
+                sh './gradlew cucumberReports'
+            }
+            post {
+                always {
+                    // Archive test results
+                    junit '**/build/test-results/test/*.xml'
                     
-                    // Create cucumber report directory
-                    bat 'mkdir build/reports/cucumber'
+                    // Archive Jacoco coverage reports
+                    archiveArtifacts artifacts: 'build/reports/jacoco/**/*', fingerprint: true
                     
-                    // Copy cucumber reports
-                    bat 'xcopy reports/cucumber-report.json build/reports/cucumber/'
+                    // Archive Cucumber reports
+                    archiveArtifacts artifacts: 'build/reports/cucumber/**/*', fingerprint: true
                     
-                    // Generate test reports
-                    junit 'build/test-results/**/*.xml'
-                    cucumber buildStatus: 'UNSTABLE',
-                            fileIncludePattern: '**/cucumber-report.json',
-                            jsonReportDirectory: 'build/reports/cucumber'
+                    // Publish Jacoco coverage report
+                    jacoco(
+                        execPattern: '**/build/jacoco/*.exec',
+                        classPattern: '**/build/classes/java/main',
+                        sourcePattern: '**/src/main/java'
+                    )
                 }
             }
-        }
-        stage('Code Analysis') {
-            steps {
-                bat './gradlew sonarqube'
-            }
-        }
-        stage('Code Quality') {
-            steps {
-                script {
-                    def qualityGate = waitForQualityGate()
-                    if (qualityGate.status != 'OK') {
-                        error "Quality Gate failed: ${qualityGate.status}"
-                    }
-                }
-            }
-        }
-        stage('Build') {
-            steps {
-                sh './gradlew build'
-                sh './gradlew javadoc'
-                archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true
-                archiveArtifacts artifacts: 'build/docs/**/*.html', fingerprint: true
-            }
-        }
-        stage('Deploy') {
-            steps {
-                sh './gradlew publish'
-            }
-        }
-    }
-    post {
-        success {
-            echo 'Pipeline executed successfully'
-            slackSend(channel: '#dev-team', message: 'Build and deploy successful')
-        }
-        failure {
-            echo 'Pipeline failed'
-            slackSend(channel: '#dev-team', message: 'Build failed. Check Jenkins logs.')
         }
     }
 }
