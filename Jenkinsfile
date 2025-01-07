@@ -38,7 +38,7 @@ pipeline {
                     withSonarQubeEnv('sonarqube') {
                         bat """
                         sonar-scanner \
-                        -Dsonar.projectKey=4c337cb911cbe72c03f162878303bc43a467ee43 \
+                        -Dsonar.projectKey=com.example:Last_TP7 \
                         -Dsonar.sources=src/main/java \
                         """
                     }
