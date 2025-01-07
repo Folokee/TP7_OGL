@@ -100,7 +100,14 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo "${MAVEN_USERNAME}"
+                script {
+                    bat """
+                        ./gradlew.bat publish \
+                        -PmavenRepoUrl=${MAVEN_URL} \
+                        -PmavenUsername=${MAVEN_USERNAME} \
+                        -PmavenPassword=${MAVEN_PASSWORD}
+                    """
+                }
             }
             post {
                 success {
