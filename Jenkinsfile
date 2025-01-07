@@ -32,14 +32,17 @@ pipeline {
         }
 
         stage('Code Analysis') {
+            environment {
+                SONAR_HOST_URL = 'http://197.140.142.82:9000'
+            }
             steps {
                 script {
                     // Run SonarQube analysis
                     withSonarQubeEnv('sonarqube') {
                         bat """
-                        sonar-scanner \
-                        -Dsonar.projectKey=com.example:Last_TP7 \
-                        -Dsonar.sources=src/main/java \
+                            ./gradlew.bat sonarqube \
+                            -Dsonar.host.url=${SONAR_HOST_URL} \
+                            -Dsonar.gradle.skipCompile=true
                         """
                     }
                 }
