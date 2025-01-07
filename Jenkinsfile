@@ -5,31 +5,28 @@ pipeline {
         stage('Test') {
             steps {
                 // Run unit tests
-                bat './gradlew test'
+                junit '**/build/test-results/test/*.xml'
                 
                 // Generate Jacoco test coverage reports
-                bat './gradlew jacocoTestReport'
+                jacoco(
+                    execPattern: '**/build/jacoco/*.exec',
+                    classPattern: '**/build/classes/java/main',
+                    sourcePattern: '**/src/main/java'
+                )
                 
                 // Generate Cucumber reports
-                bat './gradlew cucumberReports'
+                cucumber jsonReportDirectory: 'reports', fileIncludePattern: 'cucumber-report.json'
             }
             post {
                 always {
                     // Archive test results
-                    junit '**/build/test-results/test/*.xml'
+                    archiveArtifacts artifacts: '**/build/test-results/test/*.xml', fingerprint: true
                     
                     // Archive Jacoco coverage reports
                     archiveArtifacts artifacts: 'build/reports/jacoco/**/*', fingerprint: true
                     
                     // Archive Cucumber reports
                     archiveArtifacts artifacts: 'build/reports/cucumber/**/*', fingerprint: true
-                    
-                    // Publish Jacoco coverage report
-                    jacoco(
-                        execPattern: '**/build/jacoco/*.exec',
-                        classPattern: '**/build/classes/java/main',
-                        sourcePattern: '**/src/main/java'
-                    )
                 }
             }
         }
