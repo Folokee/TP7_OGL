@@ -119,6 +119,55 @@ pipeline {
             }
         }
 
+    
+
+        stage('Notification') {
+            steps {
+                script {
+                    // Email Notification
+                    emailext (
+                        subject: "Pipeline Status: ${currentBuild.result}",
+                        body: """<p>Pipeline Status: ${currentBuild.result}</p>
+                            <p>Build Number: ${env.BUILD_NUMBER}</p>
+                            <p>Build URL: ${env.BUILD_URL}</p>""",
+                        to: 'lr_menassel@esi.dz',
+                        mimeType: 'text/html'
+                    )
+                    
+                    // Slack Notification
+                    slackSend (
+                        channel: '#tp',
+                        color: currentBuild.result == 'SUCCESS' ? 'good' : 'danger',
+                        message: "Pipeline ${currentBuild.result}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            script {
+                // Send failure notifications
+                emailext (
+                    subject: "Pipeline Failed: ${env.JOB_NAME}",
+                    body: """<p>Pipeline Failed</p>
+                        <p>Failed Stage: ${FAILED_STAGE}</p>
+                        <p>Build Number: ${env.BUILD_NUMBER}</p>
+                        <p>Build URL: ${env.BUILD_URL}</p>""",
+                    to: 'lr_menassel@esi.dz',
+                    mimeType: 'text/html'
+                )
+                
+                slackSend (
+                    channel: '#jenkins-notifications',
+                    color: 'danger',
+                    message: "Pipeline Failed: Job ${env.JOB_NAME} failed at stage ${FAILED_STAGE}\n More info at: ${env.BUILD_URL}"
+                )
+            }
+        }
+    }
+
 
 
 
