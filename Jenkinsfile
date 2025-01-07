@@ -36,7 +36,11 @@ pipeline {
                 script {
                     // Run SonarQube analysis
                     withSonarQubeEnv('sonarqube') {
-                        bat 'sonar-scanner'
+                        bat """
+                        ./gradlew sonarqube \
+                        -Dsonar.host.url=http://197.140.142.82:9000 \
+                        -Dsonar.login=4c337cb911cbe72c03f162878303bc43a467ee43
+                        """
                     }
                 }
             }
