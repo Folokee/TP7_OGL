@@ -4,6 +4,7 @@ pipeline {
     stages {
         stage('Test') {
             steps {
+                bat """ ./gradlew.bat test"""
                 // Run unit tests
                 junit '**/build/test-results/test/*.xml'
                 
