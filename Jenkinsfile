@@ -39,7 +39,7 @@ pipeline {
                         bat """
                         sonar-scanner \
                         -Dsonar.projectKey=com.example:Last_TP7 \
-                        -Dsonar.sources=src/main/java \
+                        -Dsonar.sources=C:/Users/rayan/IdeaProjects/Last_TP7/src/main/java \
                         """
                     }
                 }
