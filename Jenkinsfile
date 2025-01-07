@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh './gradlew test'
+                bat './gradlew test'
                 junit 'build/test-results/**/*.xml'
                 cucumber 'build/reports/cucumber/*.json'
             }
