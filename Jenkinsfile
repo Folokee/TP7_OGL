@@ -9,10 +9,10 @@ pipeline {
                     bat './gradlew test'
                     
                     // Create cucumber report directory
-                    bat 'mkdir -p build/reports/cucumber'
+                    bat 'mkdir build/reports/cucumber'
                     
                     // Copy cucumber reports
-                    bat 'cp reports/cucumber-report.json build/reports/cucumber/'
+                    bat 'xcopy reports/cucumber-report.json build/reports/cucumber/'
                     
                     // Generate test reports
                     junit 'build/test-results/**/*.xml'
