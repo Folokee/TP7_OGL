@@ -47,7 +47,6 @@ pipeline {
                         bat """
                             ./gradlew.bat sonarqube \
                             -Dsonar.host.url=${SONAR_HOST_URL} \
-                            -Dsonar.login=d1e31c8c70c63d2fbb876608a254a34181441d4b \
                             -Dsonar.gradle.skipCompile=true
                         """
                     }
