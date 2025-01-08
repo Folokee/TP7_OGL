@@ -49,8 +49,9 @@ pipeline {
                             -Dsonar.host.url=${SONAR_HOST_URL} \
                             -Dsonar.gradle.skipCompile=true
                         """
-                        env.QUALITY = waitForQualityGate()
                     }
+
+                    env.QUALITY = waitForQualityGate()
                     
                     
                 }
