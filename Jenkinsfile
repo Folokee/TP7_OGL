@@ -49,6 +49,7 @@ pipeline {
                             -Dsonar.host.url=${SONAR_HOST_URL} \
                             -Dsonar.gradle.skipCompile=true
                         """
+                        env.QUALITY = waitForQualityGate()
                     }
                     
                     
@@ -61,13 +62,9 @@ pipeline {
                 script {
                     // Wait for quality gate response from SonarQube
                     timeout(time: 1, unit: 'HOURS') {
-                        sleep(time: 5, unit: 'SECONDS')
-                        withSonarQubeEnv('sonarqube') {
-                            def qualityGate = waitForQualityGate()
-                            if (qualityGate.status != 'OK') {
+                            if (env.QUALITY.status != 'OK') {
                                 error "Pipeline aborted due to quality gate failure: ${qualityGate.status}"
                             }
-                        }
                     }
                 }
             }
