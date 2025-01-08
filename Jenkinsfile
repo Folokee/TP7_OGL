@@ -134,7 +134,6 @@ pipeline {
                     // Slack Notification
                     slackSend(
                         channel: "${SLACK_CHANNEL}",
-                        tokenCredentialId: "https://hooks.slack.com/services/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",
                         color: currentBuild.result == 'SUCCESS' ? 'good' : 'danger',
                         message: "Pipeline ${currentBuild.result}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}"
                     )
@@ -160,7 +159,6 @@ pipeline {
                 
                 slackSend (
                     channel: "${SLACK_CHANNEL}",
-                    tokenCredentialId: "https://hooks.slack.com/services/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",
                     color: 'danger',
                     message: "Pipeline Failed: Job ${env.JOB_NAME} failed at stage ${FAILED_STAGE}\n More info at: ${env.BUILD_URL}"
                 )
