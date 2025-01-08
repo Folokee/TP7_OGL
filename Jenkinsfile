@@ -47,11 +47,10 @@ pipeline {
                         bat """
                             ./gradlew.bat sonarqube \
                             -Dsonar.host.url=${SONAR_HOST_URL} \
+                            -Dsonar.login=d1e31c8c70c63d2fbb876608a254a34181441d4b \
                             -Dsonar.gradle.skipCompile=true
                         """
                     }
-
-                    env.QUALITY = waitForQualityGate()
                     
                     
                 }
@@ -63,9 +62,10 @@ pipeline {
                 script {
                     // Wait for quality gate response from SonarQube
                     timeout(time: 1, unit: 'HOURS') {
-                            if (env.QUALITY.status != 'OK') {
-                                error "Pipeline aborted due to quality gate failure: ${qualityGate.status}"
-                            }
+                        env.QUALITY = waitForQualityGate()
+                        if (env.QUALITY.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qualityGate.status}"
+                        }
                     }
                 }
             }
