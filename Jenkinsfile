@@ -49,7 +49,6 @@ pipeline {
                             ./gradlew.bat sonarqube \
                             -Dsonar.projectKey=com.example:Last_TP7 \
                             -Dsonar.host.url=${SONAR_HOST_URL} \
-                            -Dsonar.gradle.skipCompile=true
                         """
                     }
                 }
@@ -60,20 +59,10 @@ pipeline {
             steps {
                 script {
                     // Wait for quality gate response from SonarQube
-                    timeout(time: 2, unit: 'MINUTES') {
-                        while (true) {
-                            def qg = waitForQualityGate()
-                            if (qg != null) {
-                                if (qg.status != 'IN_PROGRESS') {
-                                    if (qg.status != 'OK') {
-                                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                                    }
-                                    break
-                                }
-                            } else {
-                                echo 'Quality gate not yet computed'
-                            }
-                            sleep 10
+                    timeout(time: 1, unit: 'HOURS') {
+                        def qualityGate = waitForQualityGate()
+                        if (qualityGate.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qualityGate.status}"
                         }
                     }
                 }
