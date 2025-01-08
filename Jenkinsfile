@@ -62,9 +62,11 @@ pipeline {
                     // Wait for quality gate response from SonarQube
                     timeout(time: 1, unit: 'HOURS') {
                         sleep(time: 5, unit: 'SECONDS')
-                        def qualityGate = waitForQualityGate()
-                        if (qualityGate.status != 'OK') {
-                            error "Pipeline aborted due to quality gate failure: ${qualityGate.status}"
+                        withSonarQubeEnv('sonarqube') {
+                            def qualityGate = waitForQualityGate()
+                            if (qualityGate.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qualityGate.status}"
+                            }
                         }
                     }
                 }
