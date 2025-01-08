@@ -50,12 +50,7 @@ pipeline {
                         -Dsonar.host.url=${SONAR_HOST_URL}
                     """, returnStdout: true).trim()
                     
-                    // Extract the analysis ID from the SonarQube task output
-                    def analysisId = sonarTask.readLines().find { it.contains('ANALYSIS ID') }?.split('=')?.last()?.trim()
-                    if (!analysisId) {
-                        error "Failed to extract analysis ID from SonarQube task output"
-                    }
-                    env.SONAR_ANALYSIS_ID = analysisId
+                    
                 }
             }
         }
@@ -66,7 +61,7 @@ pipeline {
                     // Wait for quality gate response from SonarQube
                     timeout(time: 1, unit: 'HOURS') {
                         sleep(time: 5, unit: 'SECONDS')
-                        def qualityGate = waitForQualityGate(analysisId: env.SONAR_ANALYSIS_ID)
+                        def qualityGate = waitForQualityGate(analysisId: "AZRBFtZ8zrkz5NLy0BTV")
                         if (qualityGate.status != 'OK') {
                             error "Pipeline aborted due to quality gate failure: ${qualityGate.status}"
                         }
