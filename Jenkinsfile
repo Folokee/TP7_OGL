@@ -47,6 +47,7 @@ pipeline {
                     withSonarQubeEnv('sonarqube') {
                         bat """
                             ./gradlew.bat sonarqube \
+                            -Dsonar.projectKey=com.example:Last_TP7 \
                             -Dsonar.host.url=${SONAR_HOST_URL} \
                             -Dsonar.gradle.skipCompile=true
                         """
