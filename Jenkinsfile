@@ -32,7 +32,7 @@ pipeline {
                     archiveArtifacts artifacts: 'build/reports/jacoco/**/*', fingerprint: true
                     
                     // Archive Cucumber reports
-                    archiveArtifacts artifacts: 'build/reports/cucumber/**/*', fingerprint: true
+                    archiveArtifacts artifacts: 'reports/**/*', fingerprint: true
                 }
             }
         }
