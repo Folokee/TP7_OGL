@@ -44,13 +44,18 @@ pipeline {
             steps {
                 script {
                     // Run SonarQube analysis
-                    withSonarQubeEnv('sonarqube') {
-                        bat """
-                            ./gradlew.bat sonarqube \
-                            -Dsonar.projectKey=com.example:Last_TP7 \
-                            -Dsonar.host.url=${SONAR_HOST_URL} \
-                        """
+                    def sonarTask = bat(script: """
+                        ./gradlew.bat sonarqube \
+                        -Dsonar.projectKey=com.example:Last_TP7 \
+                        -Dsonar.host.url=${SONAR_HOST_URL}
+                    """, returnStdout: true).trim()
+                    
+                    // Extract the analysis ID from the SonarQube task output
+                    def analysisId = sonarTask.readLines().find { it.contains('ANALYSIS ID') }?.split('=')?.last()?.trim()
+                    if (!analysisId) {
+                        error "Failed to extract analysis ID from SonarQube task output"
                     }
+                    env.SONAR_ANALYSIS_ID = analysisId
                 }
             }
         }
@@ -60,8 +65,8 @@ pipeline {
                 script {
                     // Wait for quality gate response from SonarQube
                     timeout(time: 1, unit: 'HOURS') {
-                        sleep(time: 20, unit: 'SECONDS')
-                        def qualityGate = waitForQualityGate()
+                        sleep(time: 5, unit: 'SECONDS')
+                        def qualityGate = waitForQualityGate(analysisId: env.SONAR_ANALYSIS_ID)
                         if (qualityGate.status != 'OK') {
                             error "Pipeline aborted due to quality gate failure: ${qualityGate.status}"
                         }
