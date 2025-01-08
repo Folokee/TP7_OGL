@@ -45,9 +45,10 @@ pipeline {
                 script {
                     withSonarQubeEnv('sonarqube') {
                         bat """
-                            ./gradlew.bat sonarqube \
+                            sonar-scanner \
+                            -Dsonar.projectKey=com.example:Last_TP7 \
                             -Dsonar.host.url=${SONAR_HOST_URL} \
-                            -Dsonar.gradle.skipCompile=true
+                            -Dsonar.sources=src/main/java \
                         """
                     }
                     
